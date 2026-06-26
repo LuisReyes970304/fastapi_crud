@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from models.models import NewUser
 from router.get_user import router as get_users
+from router.root import route as root
 from db.fake_db import fake_db
 import json
-
 
 document = "database.json"
 
@@ -21,11 +21,9 @@ async def lifepan(app: FastAPI):
         fake_db.clear()
 
 app = FastAPI(lifespan=lifepan)
-app.include_router(get_users)
 
-@app.get("/")
-async def root():
-    return {"greeting": "Welcome to student manager"}
+app.include_router(root)
+app.include_router(get_users)
 
 @app.post("/create/")
 async def create_new_user(new_user: NewUser):
