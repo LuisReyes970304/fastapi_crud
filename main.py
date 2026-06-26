@@ -3,14 +3,11 @@ from contextlib import asynccontextmanager
 from models.models import NewUser
 from router.get_user import router as get_users
 from router.root import route as root
-from db.fake_db import fake_db
+from router.create_user import route as create_user
+
+from db.fake_db import fake_db, document
+from infrastructure.data_management import data_management
 import json
-
-document = "database.json"
-
-async def data_management():
-    with open(document, "w") as file:
-        json.dump(fake_db, file, indent=4)
 
 @asynccontextmanager
 async def lifepan(app: FastAPI):
@@ -24,12 +21,8 @@ app = FastAPI(lifespan=lifepan)
 
 app.include_router(root)
 app.include_router(get_users)
-
-@app.post("/create/")
-async def create_new_user(new_user: NewUser):
-    fake_db.append(new_user.model_dump())
-    await data_management()
-    return {"user": new_user, "status": "200ok"}
+app.include_router(create_user)
+app.include_router()
 
 @app.patch("/update")
 async def update_user(index: int, new_name: str, new_last_name: str):
