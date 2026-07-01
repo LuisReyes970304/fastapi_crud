@@ -8,8 +8,8 @@ router = APIRouter(
 )
 
 @router.patch("/update")
-async def update_user(index: int, username: str, new_password: str):
-    user_updated = {"username": username, "password": new_password}
+async def update_user(index: int, id: str, username: str, new_password: str):
+    user_updated = {"id": id, "username": username, "password": new_password}
     fake_db[index] = user_updated
     await data_management()
-    return {"username": username, "password": new_password, "message": "User updated"}
+    return {"message": "User updated", "user": {"username": username, "password": new_password}}
